@@ -38,13 +38,7 @@
       "id": "tpc-tracks",
       "active": "true",
       "machines": [],
-      "dataHeaders": [
-        {
-          "binding": "tpc-sampled-tracks",
-          "dataOrigin": "TPC",
-          "dataDescription": "TRACKS"
-        }
-      ],
+      "query": "tpc-sampled-tracks:TPC/TRACKS/0",
       "subSpec": "0",
       "samplingConditions": [
         {

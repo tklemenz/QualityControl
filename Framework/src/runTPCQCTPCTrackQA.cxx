@@ -36,9 +36,9 @@ void customize(std::vector<ChannelConfigurationPolicy>& policies)
 
 void customize(std::vector<ConfigParamSpec>& workflowOptions)
 {
-  workflowOptions.push_back(ConfigParamSpec{ "input-file", VariantType::String, "tpctracks.root", { "Input file name for TPC tracks" } });
-  workflowOptions.push_back(ConfigParamSpec{ "tree-name", VariantType::String, "tpcrec", { "Name of the tree containing the TPC tracks vector" } });
-  workflowOptions.push_back(ConfigParamSpec{ "branch-name", VariantType::String, "TPCTracks", { "Name of the branch of the TPC tracks vector" } });
+  workflowOptions.push_back(ConfigParamSpec{ "track-file", VariantType::String, "tpctracks.root", { "Input file name for TPC tracks" } });
+  workflowOptions.push_back(ConfigParamSpec{ "track-tree-name", VariantType::String, "tpcrec", { "Name of the tree containing the TPC tracks vector" } });
+  workflowOptions.push_back(ConfigParamSpec{ "track-branch-name", VariantType::String, "TPCTracks", { "Name of the branch of the TPC tracks vector" } });
 }
 
 // c++ includes
@@ -62,49 +62,48 @@ WorkflowSpec defineDataProcessing(const ConfigContext& config)
 
   // ===| workflow options |====================================================
   //
-  auto inputFile = config.options().get<std::string>("input-file");
-  auto treeName = config.options().get<std::string>("tree-name");
-  auto branchName = config.options().get<std::string>("branch-name");
+  auto trackFile          = config.options().get<std::string>("track-file");
+  auto trackTreeName      = config.options().get<std::string>("track-tree-name");
+  auto trackBranchName    = config.options().get<std::string>("track-branch-name");
 
   // ===| tree reader |=========================================================
   //
   // The tree reader will read tpc tracks from file crated via the o2 sim/rec
   // workflow
-  DataProcessorSpec producer{
+  DataProcessorSpec trackProducer{
     "tpc-track-reader",
     Inputs{},
     Outputs{
       { "TPC", "TRACKS", 0, Lifetime::Timeframe } },
     AlgorithmSpec{
-      (AlgorithmSpec::InitCallback)[inputFile, treeName, branchName](InitContext&){
+      (AlgorithmSpec::InitCallback)[trackFile, trackTreeName, trackBranchName](InitContext&){
 
         // root tree reader
         //constexpr auto persistency = Lifetime::Transient;
         constexpr auto persistency = Lifetime::Timeframe;
 
-  auto reader = std::make_shared<RootTreeReader>(treeName.data(),                      // tree name
-                                                 inputFile.data(),                     // input file name
-                                                 RootTreeReader::PublishingMode::Loop, // loop over
+        auto reader = std::make_shared<RootTreeReader>(trackTreeName.data(),                      // tree name
+                                                 trackFile.data(),                                // input file name
+                                                 RootTreeReader::PublishingMode::Loop,            // loop over
                                                  Output{ "TPC", "TRACKS", 0, persistency },
-                                                 branchName.data() // name of the branch
-  );
+                                                 trackBranchName.data()                           // name of the branch
+        );
 
-  return (AlgorithmSpec::ProcessCallback)[reader](ProcessingContext & processingContext) mutable
-  {
-    //(++(*reader))(processingContext);
-    if (reader->next()) {
-      (*reader)(processingContext);
-      //LOG(INFO) << "Call producer AlgorithmSpec::ProcessCallback:  has data " << reader->getCount();
-    } else {
-      //LOG(INFO) << "Call producer AlgorithmSpec::ProcessCallback:  no next data" << reader->getCount();
+        return (AlgorithmSpec::ProcessCallback)[reader](ProcessingContext & processingContext) mutable {
+          //(++(*reader))(processingContext);
+          if (reader->next()) {
+            (*reader)(processingContext);
+            //LOG(INFO) << "Call producer AlgorithmSpec::ProcessCallback:  has data " << reader->getCount();
+          } else {
+          //LOG(INFO) << "Call producer AlgorithmSpec::ProcessCallback:  no next data" << reader->getCount();
+          }
+        };
+      }
     }
-  };
-}
-}
-}
+  }
 ;
 
-specs.push_back(producer);
+specs.push_back(trackProducer);
 
 // ===| QC task |=============================================================
 //
