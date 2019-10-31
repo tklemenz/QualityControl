@@ -5,6 +5,5 @@
 
 #pragma link C++ class o2::quality_control_modules::tpc::PID+;
 #pragma link C++ class o2::quality_control_modules::tpc::TPCTrackQA+;
-#pragma link C++ class o2::quality_control_modules::tpc::thomasDigits+;
 
 #endif
