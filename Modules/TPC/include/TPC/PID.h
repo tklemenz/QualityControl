@@ -10,7 +10,7 @@
 
 ///
 /// \file   PID.h
-/// \author Jens Wiechula
+/// \author Thomas Klemenz
 ///
 
 #ifndef QC_MODULE_TPC_PID_H

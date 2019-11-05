@@ -38,8 +38,13 @@ void PID::initialize(o2::framework::InitContext& /*ctx*/)
   QcInfoLogger::GetInstance() << "initialize TPC PID QC task" << AliceO2::InfoLogger::InfoLogger::endm;
 
   mQCPID.initializeHistograms();
+  mQCPID.setNiceStyle();
 
   for (auto& hist : mQCPID.getHistograms1D()) {
+    getObjectsManager()->startPublishing(&hist);
+    getObjectsManager()->addMetadata(hist.GetName(), "custom", "34");
+  }
+  for (auto& hist : mQCPID.getHistograms2D()) {
     getObjectsManager()->startPublishing(&hist);
     getObjectsManager()->addMetadata(hist.GetName(), "custom", "34");
   }
@@ -60,13 +65,12 @@ void PID::monitorData(o2::framework::ProcessingContext& ctx)
 {
   using TrackType = std::vector<o2::tpc::TrackTPC>;
   auto tracks = ctx.inputs().get<TrackType>("tpc-sampled-tracks");
+
   QcInfoLogger::GetInstance() << "monitorData: " << tracks.size() << AliceO2::InfoLogger::InfoLogger::endm;
 
   for (auto const& track : tracks) {
+    QcInfoLogger::GetInstance() << "processing track" << AliceO2::InfoLogger::InfoLogger::endm;
     mQCPID.processTrack(track);
-    //const auto p = track.getP();
-    //const auto dEdx = track.getdEdx().dEdxTotTPC;
-    //printf("p: dEdx = %.2f: %.2f\n", p, dEdx);
   }
 }
 
