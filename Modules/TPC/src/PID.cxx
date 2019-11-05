@@ -69,7 +69,6 @@ void PID::monitorData(o2::framework::ProcessingContext& ctx)
   QcInfoLogger::GetInstance() << "monitorData: " << tracks.size() << AliceO2::InfoLogger::InfoLogger::endm;
 
   for (auto const& track : tracks) {
-    QcInfoLogger::GetInstance() << "processing track" << AliceO2::InfoLogger::InfoLogger::endm;
     mQCPID.processTrack(track);
   }
 }
