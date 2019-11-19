@@ -108,7 +108,7 @@ specs.push_back(producer);
 
 // ===| QC task |=============================================================
 //
-std::string filename = "tpcQCPID.json";
+/*std::string filename = "tpcQCPID.json";
 const std::string qcConfigurationSource = std::string("json://") + getenv("QUALITYCONTROL_ROOT") + "/etc/" + filename;
 LOG(INFO) << "Using config file '" << qcConfigurationSource << "'";
 
@@ -117,6 +117,6 @@ DataSampling::GenerateInfrastructure(specs, qcConfigurationSource);
 
 // Generation of the QC topology (one task, one checker in this case)
 o2::quality_control::generateRemoteInfrastructure(specs, qcConfigurationSource);
-
+*/
 return specs;
 }
