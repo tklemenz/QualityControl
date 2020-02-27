@@ -6,6 +6,7 @@ target_sources(QcTPC PRIVATE src/PID.cxx
                              src/Tracks.cxx
                              src/PIDClusterCheck.cxx
                              src/TrackClusterCheck.cxx)
+                             src/Clusters.cxx)
 
 target_include_directories(
   QcTPC
@@ -25,6 +26,7 @@ add_root_dictionary(QcTPC
                             include/TPC/Tracks.h
                             include/TPC/PIDClusterCheck.h
                             include/TPC/TrackClusterCheck.h
+                            include/TPC/Clusters.h
                     LINKDEF include/TPC/LinkDef.h
                     BASENAME QcTPC)
 
@@ -75,4 +77,5 @@ install(FILES run/tpcQCPID_sampled.json
               run/tpcQCTracks_sampled.json
               run/tpcQCTracks_direct.json
               run/tpcQCClusterChecker.json
+              run/tpcQCClusters_sampled.json
         DESTINATION etc)
