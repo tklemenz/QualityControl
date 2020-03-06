@@ -13,6 +13,16 @@
 /// \author Jens Wiechula
 ///
 
+#include "Framework/PartRef.h"
+#include "Framework/WorkflowSpec.h" // o2::framework::mergeInputs
+#include "Framework/DataRefUtils.h"
+#include "Framework/DataSpecUtils.h"
+#include "Framework/ControlService.h"
+#include "Framework/ConfigParamRegistry.h"
+
+using o2::framwork::PartRef;
+
+
 // root includes
 #include <TCanvas.h>
 #include <TH1.h>
@@ -31,6 +41,12 @@
 // QC includes
 #include "QualityControl/QcInfoLogger.h"
 #include "TPC/Clusters.h"
+
+
+
+
+
+
 
 namespace o2::quality_control_modules::tpc
 {
@@ -99,10 +115,15 @@ void Clusters::startOfCycle()
 
 void Clusters::monitorData(o2::framework::ProcessingContext& ctx)
 {
-  std::vector<int> inputIds;                                                // inputIds is input of getCATrackerSpec, std::vector<int> const& inputIds
+  constexpr static size_t NSectors = o2::tpc::Sector::MAXSECTOR;
+  std::bitset<NSectors> mcInputs = 0;
+  std::bitset<NSectors> validInputs = 0;
+  uint64_t activeSectors = 0;
+  std::vector<int> inputIds(36); 
+  std::iota(inputIds.begin(),inputIds.end(),0);                                               // inputIds is input of getCATrackerSpec, std::vector<int> const& inputIds
                                                                             // which is laneConfiguration in RecoWorkflow.cxx
   std::map<int, DataRef> datarefs;
-  for (auto const& inputId : processAttributes->inputIds) {
+  for (auto const& inputId : inputIds) {
     std::string inputLabel = "input" + std::to_string(inputId);
     auto ref = ctx.inputs().get(inputLabel);
     auto const* sectorHeader = DataRefUtils::getHeader<o2::tpc::TPCSectorHeader*>(ref);
@@ -128,7 +149,7 @@ void Clusters::monitorData(o2::framework::ProcessingContext& ctx)
       // multiple buffers need to be handled
       throw std::runtime_error("can only have one cluster data set per sector");
     }
-    activeSectors |= sectorHeader->activeSectors;
+    //activeSectors |= sectorHeader->activeSectors;
     validInputs.set(sector);
     datarefs[sector] = ref;
   }
@@ -167,7 +188,7 @@ void Clusters::monitorData(o2::framework::ProcessingContext& ctx)
 
 
 
-  using ClusterType = std::vector<o2::tpc::ClusterNative>;
+  /*using ClusterType = std::vector<o2::tpc::ClusterNative>;
   auto clusters = ctx.inputs().get<ClusterType>("inputClusters");
   QcInfoLogger::GetInstance() << "monitorData " << AliceO2::InfoLogger::InfoLogger::endm;
 
@@ -187,7 +208,7 @@ void Clusters::monitorData(o2::framework::ProcessingContext& ctx)
     }
   }
 
-  mQCClusters.analyse();
+  mQCClusters.analyse();*/
 
 }
 
