@@ -5,7 +5,7 @@ add_library(QcTPC)
 target_sources(QcTPC PRIVATE src/PID.cxx
                              src/Tracks.cxx
                              src/PIDClusterCheck.cxx
-                             src/TrackClusterCheck.cxx)
+                             src/TrackClusterCheck.cxx
                              src/Clusters.cxx)
 
 target_include_directories(

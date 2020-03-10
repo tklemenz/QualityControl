@@ -19,8 +19,15 @@
 #include "Framework/DataSpecUtils.h"
 #include "Framework/ControlService.h"
 #include "Framework/ConfigParamRegistry.h"
+#include "DataFormatsTPC/TPCSectorHeader.h"
 
-using o2::framwork::PartRef;
+#include <bitset>
+
+using namespace o2::framework;
+using namespace o2::header;
+using namespace o2::tpc;
+
+
 
 
 // root includes
@@ -116,9 +123,9 @@ void Clusters::startOfCycle()
 void Clusters::monitorData(o2::framework::ProcessingContext& ctx)
 {
   constexpr static size_t NSectors = o2::tpc::Sector::MAXSECTOR;
-  std::bitset<NSectors> mcInputs = 0;
+  std::array<std::vector<MCLabelContainer>, NSectors> mcInputs;
   std::bitset<NSectors> validInputs = 0;
-  uint64_t activeSectors = 0;
+  int operation = 0;
   std::vector<int> inputIds(36); 
   std::iota(inputIds.begin(),inputIds.end(),0);                                               // inputIds is input of getCATrackerSpec, std::vector<int> const& inputIds
                                                                             // which is laneConfiguration in RecoWorkflow.cxx
@@ -163,13 +170,15 @@ void Clusters::monitorData(o2::framework::ProcessingContext& ctx)
     auto& ref = refentry.second;
     inputs[sector] = gsl::span(ref.payload, DataRefUtils::getPayloadSize(ref));
     inputStatus.reset(sector);
-    printInputLog(ref, "received", sector);
+    //printInputLog(ref, "received", sector);
   }
+
   ClusterNativeAccess clusterIndex;
   std::unique_ptr<ClusterNative[]> clusterBuffer;
   MCLabelContainer clustersMCBuffer;
   memset(&clusterIndex, 0, sizeof(clusterIndex));
-  ClusterNativeHelper::Reader::fillIndex(clusterIndex, clusterBuffer, clustersMCBuffer, inputs, mcInputs, [&validInputs](auto& index) { return validInputs.test(index); });
+  ClusterNativeHelper::Reader::fillIndex(clusterIndex, clusterBuffer, clustersMCBuffer, 
+                                         inputs, mcInputs, [&validInputs](auto& index) { return validInputs.test(index); });
         
   for (int isector = 0; isector < o2::tpc::Constants::MAXSECTOR; ++isector) {
     for (int irow = 0; irow < o2::tpc::Constants::MAXGLOBALPADROW; ++irow) {
