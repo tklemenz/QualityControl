@@ -77,5 +77,5 @@ install(FILES run/tpcQCPID_sampled.json
               run/tpcQCTracks_sampled.json
               run/tpcQCTracks_direct.json
               run/tpcQCClusterChecker.json
-              run/tpcQCClusters_sampled.json
+              run/tpcQCClusters_direct.json
         DESTINATION etc)
