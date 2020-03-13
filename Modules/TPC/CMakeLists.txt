@@ -19,6 +19,11 @@ target_link_libraries(QcTPC
                       PUBLIC QualityControl
                              O2::TPCQC)
 
+#add_executable(qc-reco-workflow-test
+#               COMPONENT_NAME tpc
+#               SOURCES src/tpc-reco-workflow.cxx
+#               PUBLIC_LINK_LIBRARIES O2::TPCWorkflow)
+
 
 
 add_root_dictionary(QcTPC
@@ -49,10 +54,12 @@ endforeach()
 # ---- Executables ----
 
 set(EXE_SRCS
-    run/runTPCQCTrackReader.cxx)
+    run/runTPCQCTrackReader.cxx
+    src/tpc-reco-workflow.cxx)
 
 set(EXE_NAMES
-    o2-qc-run-tpctrackreader)
+    o2-qc-run-tpctrackreader
+    o2-qc-test-reco-workflow)
 
 list(LENGTH EXE_SRCS count)
 math(EXPR count "${count}-1")
@@ -62,6 +69,7 @@ foreach(i RANGE ${count})
   add_executable(${name} ${src})
   target_link_libraries(${name} PRIVATE QcTPC ROOT::Tree)
 endforeach()
+target_link_libraries(o2-qc-test-reco-workflow PUBLIC O2::TPCWorkflow)
 
 # ---- Install ----
 
