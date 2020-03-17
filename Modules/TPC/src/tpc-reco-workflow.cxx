@@ -83,7 +83,16 @@ void customize(std::vector<o2::framework::CompletionPolicy>& policies)
   using CompletionPolicyHelpers = o2::framework::CompletionPolicyHelpers;
   policies.push_back(CompletionPolicyHelpers::defineByName("tpc-cluster-decoder.*", CompletionPolicy::CompletionOp::Consume));
   policies.push_back(CompletionPolicyHelpers::defineByName("tpc-clusterer.*", CompletionPolicy::CompletionOp::Consume));
+  //policies.push_back(CompletionPolicyHelpers::defineByName("",CompletionPolicy::CompletionOp::Consume));
+  //DataSampling::CustomizeInfrastructure(policies);
+  DataSampling::CustomizeInfrastructure(policies);
+  o2::quality_control::customizeInfrastructure(policies);
 }
+
+//void customize(std::vector<ChannelConfigurationPolicy>& policies)
+//{
+//  DataSampling::CustomizeInfrastructure(policies);
+//}
 
 #include "Framework/runDataProcessing.h" // the main driver
 
