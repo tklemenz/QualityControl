@@ -19,7 +19,17 @@
 #include <TH2.h>
 
 // O2 includes
+#include "Framework/DataRefUtils.h"
+#include "Framework/AlgorithmSpec.h"
+#include "Framework/ServiceRegistry.h"
+#include "Framework/runDataProcessing.h"
+#include <Monitoring/Monitoring.h>
+#include "Framework/ControlService.h"
+#include "Framework/CallbackService.h"
+#include "Framework/Logger.h"
+
 #include "Framework/ProcessingContext.h"
+#include "Framework/ControlService.h"
 #include "DataFormatsTPC/TrackTPC.h"
 #include "TPCQC/Helpers.h"
 
@@ -78,6 +88,9 @@ void PID::monitorData(o2::framework::ProcessingContext& ctx)
     //const auto dEdx = track.getdEdx().dEdxTotTPC;
     //printf("p: dEdx = %.2f: %.2f\n", p, dEdx);
   }
+  ctx.services().get<o2::framework::ControlService>().readyToQuit(o2::framework::QuitRequest::All);
+  //ctx.services().get<o2::framework::ControlService>().endOfStream();
+  //ctx.services().get<o2::framework::ControlService>().readyToQuit(o2::framework::QuitRequest::Me);
 }
 
 void PID::endOfCycle()
