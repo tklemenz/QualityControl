@@ -88,7 +88,7 @@ void PID::monitorData(o2::framework::ProcessingContext& ctx)
     //const auto dEdx = track.getdEdx().dEdxTotTPC;
     //printf("p: dEdx = %.2f: %.2f\n", p, dEdx);
   }
-  ctx.services().get<o2::framework::ControlService>().readyToQuit(o2::framework::QuitRequest::All);
+  //ctx.services().get<o2::framework::ControlService>().readyToQuit(o2::framework::QuitRequest::All);
   //ctx.services().get<o2::framework::ControlService>().endOfStream();
   //ctx.services().get<o2::framework::ControlService>().readyToQuit(o2::framework::QuitRequest::Me);
 }
