@@ -71,9 +71,22 @@ void Clusters::initialize(o2::framework::InitContext& /*ctx*/)
   o2::tpc::Side ASide{o2::tpc::Side::A};
   o2::tpc::Side CSide{o2::tpc::Side::C};
 
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "debug Cluster task -> initialize" << AliceO2::InfoLogger::InfoLogger::endm;
+  TH2* testHisto = 0;
+  testHisto = o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), ASide);
+
+  QcInfoLogger::GetInstance() << "integral:\t" << testHisto->Integral() << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "entries:\t" << testHisto->GetEntries() << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "x mean:\t" << testHisto->GetMean(1) << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "y mean:\t" << testHisto->GetMean(2) << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+
   getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), ASide));
   getObjectsManager()->addMetadata(mQCClusters.getNClusters().getName(), "custom", "43");
-
+/*
   getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), CSide));
   getObjectsManager()->addMetadata(mQCClusters.getNClusters().getName(), "custom", "43");
 
@@ -106,7 +119,7 @@ void Clusters::initialize(o2::framework::InitContext& /*ctx*/)
 
   getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getTimeBin(), CSide));
   getObjectsManager()->addMetadata(mQCClusters.getTimeBin().getName(), "custom", "43");
-  
+  */
 }
 
 void Clusters::startOfActivity(Activity& /*activity*/)
@@ -122,6 +135,10 @@ void Clusters::startOfCycle()
 
 void Clusters::monitorData(o2::framework::ProcessingContext& ctx)
 {
+
+  o2::tpc::Side ASide{o2::tpc::Side::A};
+  o2::tpc::Side CSide{o2::tpc::Side::C};
+
   constexpr static size_t NSectors = o2::tpc::Sector::MAXSECTOR;
   std::array<std::vector<MCLabelContainer>, NSectors> mcInputs;
   std::bitset<NSectors> validInputs = 0;
@@ -191,33 +208,19 @@ void Clusters::monitorData(o2::framework::ProcessingContext& ctx)
   }
 
   mQCClusters.analyse();
+  
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "debug Cluster task -> monitorData" << AliceO2::InfoLogger::InfoLogger::endm;
+  TH2* testHisto = 0;
+  testHisto = o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), ASide);
 
-
-
-
-
-
-  /*using ClusterType = std::vector<o2::tpc::ClusterNative>;
-  auto clusters = ctx.inputs().get<ClusterType>("inputClusters");
-  QcInfoLogger::GetInstance() << "monitorData " << AliceO2::InfoLogger::InfoLogger::endm;
-
-  o2::tpc::ClusterNativeAccess clusterIndex;
-  std::unique_ptr<o2::tpc::ClusterNative[]> clusterBuffer;
-  o2::tpc::MCLabelContainer clustersMCBuffer;
-  memset(&clusterIndex, 0, sizeof(clusterIndex));
-  o2::tpc::ClusterNativeHelper::Reader::fillIndex(clusterIndex, clusterBuffer, clustersMCBuffer);
-
-  for (int isector = 0; isector < o2::tpc::Constants::MAXSECTOR; ++isector) {
-    for (int irow = 0; irow < o2::tpc::Constants::MAXGLOBALPADROW; ++irow) {
-      const int nClusters = clusterIndex.nClusters[isector][irow];
-      for (int icl = 0; icl < nClusters; ++icl) {
-        const auto& cl = *(clusterIndex.clusters[isector][irow] + icl);
-        mQCClusters.processCluster(cl, o2::tpc::Sector(isector), irow);
-      }
-    }
-  }
-
-  mQCClusters.analyse();*/
+  QcInfoLogger::GetInstance() << "integral:\t" << testHisto->Integral() << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "entries:\t" << testHisto->GetEntries() << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "x mean:\t" << testHisto->GetMean(1) << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "y mean:\t" << testHisto->GetMean(2) << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
 
 }
 

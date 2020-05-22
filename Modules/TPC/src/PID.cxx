@@ -38,11 +38,27 @@ PID::~PID()
 
 void PID::initialize(o2::framework::InitContext& /*ctx*/)
 {
-  QcInfoLogger::GetInstance() << "initialize TPC PID QC task" << AliceO2::InfoLogger::InfoLogger::endm;
-
+  
   mQCPID.initializeHistograms();
   //o2::tpc::qc::helpers::setStyleHistogram1D(mQCPID.getHistograms1D());
   o2::tpc::qc::helpers::setStyleHistogram2D(mQCPID.getHistograms2D());
+
+  QcInfoLogger::GetInstance() << "initialize TPC PID QC task" << AliceO2::InfoLogger::InfoLogger::endm;
+
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "debug PID task -> initialize" << AliceO2::InfoLogger::InfoLogger::endm;
+  TH2* testHisto = 0;
+  testHisto = &mQCPID.getHistograms2D().at(0);
+
+  QcInfoLogger::GetInstance() << "integral:\t" << testHisto->Integral() << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "entries:\t" << testHisto->GetEntries() << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "x mean:\t" << testHisto->GetMean(1) << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "y mean:\t" << testHisto->GetMean(2) << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+
+
 
   for (auto& hist : mQCPID.getHistograms1D()) {
     getObjectsManager()->startPublishing(&hist);
@@ -78,6 +94,20 @@ void PID::monitorData(o2::framework::ProcessingContext& ctx)
     //const auto dEdx = track.getdEdx().dEdxTotTPC;
     //printf("p: dEdx = %.2f: %.2f\n", p, dEdx);
   }
+
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "debug PID task -> monitorData" << AliceO2::InfoLogger::InfoLogger::endm;
+  TH2* testHisto = 0;
+  testHisto = &mQCPID.getHistograms2D().at(0);
+
+  QcInfoLogger::GetInstance() << "integral:\t" << testHisto->Integral() << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "entries:\t" << testHisto->GetEntries() << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "x mean:\t" << testHisto->GetMean(1) << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "y mean:\t" << testHisto->GetMean(2) << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+
 }
 
 void PID::endOfCycle()
