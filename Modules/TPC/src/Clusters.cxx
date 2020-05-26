@@ -71,55 +71,50 @@ void Clusters::initialize(o2::framework::InitContext& /*ctx*/)
   o2::tpc::Side ASide{o2::tpc::Side::A};
   o2::tpc::Side CSide{o2::tpc::Side::C};
 
-  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "debug Cluster task -> initialize" << AliceO2::InfoLogger::InfoLogger::endm;
-  TH2* testHisto = 0;
-  testHisto = o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), ASide);
+  auto clusAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), ASide));
+  auto clusCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), CSide));
+  auto qMaxAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getQMax(), ASide));
+  auto qMaxCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getQMax(), CSide));
+  auto qTotAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getQTot(), ASide));
+  auto qTotCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getQTot(), CSide));
+  auto sigmaTimeAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaTime(), ASide));
+  auto sigmaTimeCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaTime(), CSide));
+  auto sigmaPadAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaPad(), ASide));
+  auto sigmaPadCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaPad(), CSide));
+  auto timeBinAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getTimeBin(), ASide));
+  auto timeBinCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getTimeBin(), CSide));
 
-  QcInfoLogger::GetInstance() << "integral:\t" << testHisto->Integral() << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "entries:\t" << testHisto->GetEntries() << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "x mean:\t" << testHisto->GetMean(1) << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "y mean:\t" << testHisto->GetMean(2) << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  mHistoVector.emplace_back(*clusAHisto);
+  mHistoVector.emplace_back(*clusCHisto);
+  mHistoVector.emplace_back(*qMaxAHisto);
+  mHistoVector.emplace_back(*qMaxCHisto);
+  mHistoVector.emplace_back(*qTotAHisto);
+  mHistoVector.emplace_back(*qTotCHisto);
+  mHistoVector.emplace_back(*sigmaTimeAHisto);
+  mHistoVector.emplace_back(*sigmaTimeCHisto);
+  mHistoVector.emplace_back(*sigmaPadAHisto);
+  mHistoVector.emplace_back(*sigmaPadCHisto);
+  mHistoVector.emplace_back(*timeBinAHisto);
+  mHistoVector.emplace_back(*timeBinCHisto);
 
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), ASide));
-  getObjectsManager()->addMetadata(mQCClusters.getNClusters().getName(), "custom", "43");
-/*
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), CSide));
-  getObjectsManager()->addMetadata(mQCClusters.getNClusters().getName(), "custom", "43");
+  delete(clusAHisto);
+  delete(clusCHisto);
+  delete(qMaxAHisto);
+  delete(qMaxCHisto);
+  delete(qTotAHisto);
+  delete(qTotCHisto);
+  delete(sigmaTimeAHisto);
+  delete(sigmaTimeCHisto);
+  delete(sigmaPadAHisto);
+  delete(sigmaPadCHisto);
+  delete(timeBinAHisto);
+  delete(timeBinCHisto);
 
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getQMax(), ASide));
-  getObjectsManager()->addMetadata(mQCClusters.getQMax().getName(), "custom", "43");
+  for (auto& hist : mHistoVector) {
+    getObjectsManager()->startPublishing(&hist);
+    getObjectsManager()->addMetadata(hist.GetName(), "custom", "34");
+  }
 
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getQMax(), CSide));
-  getObjectsManager()->addMetadata(mQCClusters.getQMax().getName(), "custom", "43");
-
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getQTot(), ASide));
-  getObjectsManager()->addMetadata(mQCClusters.getQTot().getName(), "custom", "43");
-
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getQTot(), CSide));
-  getObjectsManager()->addMetadata(mQCClusters.getQTot().getName(), "custom", "43");
-
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaTime(), ASide));
-  getObjectsManager()->addMetadata(mQCClusters.getSigmaTime().getName(), "custom", "43");
-
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaTime(), CSide));
-  getObjectsManager()->addMetadata(mQCClusters.getSigmaTime().getName(), "custom", "43");
-
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaPad(), ASide));
-  getObjectsManager()->addMetadata(mQCClusters.getSigmaPad().getName(), "custom", "43");
-
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaPad(), CSide));
-  getObjectsManager()->addMetadata(mQCClusters.getSigmaPad().getName(), "custom", "43");
-
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getTimeBin(), ASide));
-  getObjectsManager()->addMetadata(mQCClusters.getTimeBin().getName(), "custom", "43");
-
-  getObjectsManager()->startPublishing(o2::tpc::painter::getHistogram2D(mQCClusters.getTimeBin(), CSide));
-  getObjectsManager()->addMetadata(mQCClusters.getTimeBin().getName(), "custom", "43");
-  */
 }
 
 void Clusters::startOfActivity(Activity& /*activity*/)
@@ -144,8 +139,7 @@ void Clusters::monitorData(o2::framework::ProcessingContext& ctx)
   std::bitset<NSectors> validInputs = 0;
   int operation = 0;
   std::vector<int> inputIds(36); 
-  std::iota(inputIds.begin(),inputIds.end(),0);                                               // inputIds is input of getCATrackerSpec, std::vector<int> const& inputIds
-                                                                            // which is laneConfiguration in RecoWorkflow.cxx
+  std::iota(inputIds.begin(),inputIds.end(),0);
   std::map<int, DataRef> datarefs;
   for (auto const& inputId : inputIds) {
     std::string inputLabel = "input" + std::to_string(inputId);
@@ -208,20 +202,45 @@ void Clusters::monitorData(o2::framework::ProcessingContext& ctx)
   }
 
   mQCClusters.analyse();
-  
-  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "debug Cluster task -> monitorData" << AliceO2::InfoLogger::InfoLogger::endm;
-  TH2* testHisto = 0;
-  testHisto = o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), ASide);
 
-  QcInfoLogger::GetInstance() << "integral:\t" << testHisto->Integral() << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "entries:\t" << testHisto->GetEntries() << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "x mean:\t" << testHisto->GetMean(1) << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "y mean:\t" << testHisto->GetMean(2) << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
-  QcInfoLogger::GetInstance() << "==============================================================================================================================" << AliceO2::InfoLogger::InfoLogger::endm;
+  auto clusAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), ASide));
+  auto clusCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getNClusters(), CSide));
+  auto qMaxAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getQMax(), ASide));
+  auto qMaxCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getQMax(), CSide));
+  auto qTotAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getQTot(), ASide));
+  auto qTotCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getQTot(), CSide));
+  auto sigmaTimeAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaTime(), ASide));
+  auto sigmaTimeCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaTime(), CSide));
+  auto sigmaPadAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaPad(), ASide));
+  auto sigmaPadCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getSigmaPad(), CSide));
+  auto timeBinAHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getTimeBin(), ASide));
+  auto timeBinCHisto = static_cast<TH2F*>(o2::tpc::painter::getHistogram2D(mQCClusters.getTimeBin(), CSide));
 
+  mHistoVector[0] = *clusAHisto;
+  mHistoVector[1] = *clusCHisto;
+  mHistoVector[2] = *qMaxAHisto;
+  mHistoVector[3] = *qMaxCHisto;
+  mHistoVector[4] = *qTotAHisto;
+  mHistoVector[5] = *qTotCHisto;
+  mHistoVector[6] = *sigmaTimeAHisto;
+  mHistoVector[7] = *sigmaTimeCHisto;
+  mHistoVector[8] = *sigmaPadAHisto;
+  mHistoVector[9] = *sigmaPadCHisto;
+  mHistoVector[10] = *timeBinAHisto;
+  mHistoVector[11] = *timeBinCHisto;
+
+  delete(clusAHisto);
+  delete(clusCHisto);
+  delete(qMaxAHisto);
+  delete(qMaxCHisto);
+  delete(qTotAHisto);
+  delete(qTotCHisto);
+  delete(sigmaTimeAHisto);
+  delete(sigmaTimeCHisto);
+  delete(sigmaPadAHisto);
+  delete(sigmaPadCHisto);
+  delete(timeBinAHisto);
+  delete(timeBinCHisto);
 }
 
 void Clusters::endOfCycle()

@@ -52,6 +52,7 @@ class Clusters /*final*/ : public TaskInterface // todo add back the "final" whe
 
  private:
   o2::tpc::qc::Clusters mQCClusters{};
+  std::vector<TH2F> mHistoVector{};
 };
 
 } // namespace o2::quality_control_modules::tpc
