@@ -20,6 +20,7 @@
 #include "QualityControl/PostProcessingInterface.h"
 
 #include <boost/property_tree/ptree_fwd.hpp>
+#include <map>
 
 class TCanvas;
 
@@ -69,8 +70,9 @@ class CalDetPublisher final : public quality_control::postprocessing::PostProces
  private:
   std::vector<std::string> mOutputList{};                                ///< list of CalDet objects to be processed
   std::vector<std::vector<std::unique_ptr<TCanvas>>> mCalDetCanvasVec{}; ///< vector containing a vector of summary canvases for every CalDet object
-  std::vector<std::vector<std::string>> mMetaKeys{};                     ///< vector containing metaData keys; objects can have more than one key
-  std::vector<std::vector<std::string>> mMetaValues{};                   ///< vector containing metaData values
+  std::vector<long> mTimestamps{};                                       ///< timestamps to look for specific data in the CCDB
+  std::vector<std::map<std::string, std::string>> mLookupMaps{};         ///< meta data to look for data in the CCDB
+  std::vector<std::map<std::string, std::string>> mStoreMaps{};          ///< meta data to be stored with the output in the QCDB
 };
 
 } // namespace o2::quality_control_modules::tpc
